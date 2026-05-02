@@ -1,0 +1,33 @@
+{
+  "version": "0.1.0",
+  "name": "redemption_reserve",
+  "instructions": [
+    {
+      "name": "redeem",
+      "accounts": [
+        { "name": "redemptionReserve", "isMut": true, "isSigner": false },
+        { "name": "bonusPool", "isMut": true, "isSigner": false },
+        { "name": "user", "isMut": true, "isSigner": true },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "tokensIn", "type": "u64" },
+        { "name": "minUsdcOut", "type": "u64" }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "RedemptionReserve",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "reserveBalance", "type": "u64" },
+          { "name": "hourlyCapBps", "type": "u16" },
+          { "name": "redemptionFeeBps", "type": "u16" },
+          { "name": "marketId", "type": "string" }
+        ]
+      }
+    }
+  ]
+}

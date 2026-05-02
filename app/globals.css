@@ -1,0 +1,371 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties */
+:root {
+  --bg: #0f0e0c;
+  --bg-secondary: #1a1916;
+  --bg-card: #2d2a26;
+  --bg-dark-section: #0a0a08;
+  --ink: #f5ede0;
+  --ink-light: #b8a896;
+  --ink-muted: #7a6f63;
+  --border: #4a4640;
+  --border-strong: #6b6359;
+  --accent-blue: #5ba3ff;
+  --accent-green: #2ecc71;
+  --accent-red: #ff5555;
+  --accent-yellow: #ffd700;
+  --accent-purple: #bb86fc;
+  --grid-color: rgba(245, 237, 224, 0.06);
+}
+
+[data-theme='light'] {
+  --bg: #faf7f2;
+  --bg-secondary: #f0ede8;
+  --bg-card: #fff;
+  --bg-dark-section: #ede8e0;
+  --ink: #1a1815;
+  --ink-light: #4a4540;
+  --ink-muted: #7a7268;
+  --border: #c9bfb5;
+  --border-strong: #a89b91;
+}
+
+/* Visible grid background for visual interest */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(0deg, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+}
+
+/* Base Styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: theme('fontFamily.body');
+    background-color: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+    transition: background-color 0.4s, color 0.4s;
+    position: relative;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* Keyframe Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes wobble {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-1deg);
+  }
+  75% {
+    transform: rotate(1deg);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scramble {
+  0% {
+    content: ' ';
+  }
+  10% {
+    content: '9';
+  }
+  20% {
+    content: '4';
+  }
+  30% {
+    content: '7';
+  }
+  40% {
+    content: '2';
+  }
+  50% {
+    content: '1';
+  }
+  60% {
+    content: '8';
+  }
+  70% {
+    content: '5';
+  }
+  80% {
+    content: '3';
+  }
+  90% {
+    content: '6';
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawLine {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes blink {
+  0%, 49%, 100% {
+    opacity: 1;
+  }
+  50%, 99% {
+    opacity: 0;
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes tickUp {
+  0% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+}
+
+@keyframes progressFill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes sketchIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) rotate(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-light);
+}
+
+/* Sketch Border Class */
+.sketch-border {
+  filter: url(#sketchy);
+}
+
+/* Wallet Adapter Overrides */
+
+/* Modal backdrop */
+.wallet-adapter-modal {
+  background: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Modal box */
+.wallet-adapter-modal-wrapper {
+  background-color: #1a1916 !important;
+  border: 2px solid #4a4640 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important;
+  padding: 1.5rem !important;
+}
+
+/* Title */
+.wallet-adapter-modal-title {
+  color: #f5ede0 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+/* Wallet list — reset all merged styles */
+.wallet-adapter-modal-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  margin: 1rem 0 0 !important;
+  padding: 0 !important;
+}
+
+.wallet-adapter-modal-list li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Each wallet button */
+.wallet-adapter-modal-list .wallet-adapter-button {
+  background-color: #2d2a26 !important;
+  color: #f5ede0 !important;
+  border: 1.5px solid #4a4640 !important;
+  border-radius: 0.625rem !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  transition: background-color 0.2s, border-color 0.2s !important;
+  height: auto !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button:hover {
+  background-color: #3a3630 !important;
+  border-color: #6b6359 !important;
+  transform: none !important;
+}
+
+/* "Detected" badge */
+.wallet-adapter-modal-list .wallet-adapter-button .wallet-adapter-button-end-icon,
+.wallet-adapter-modal-list .wallet-adapter-button span:last-child {
+  color: #2ecc71 !important;
+  font-size: 0.75rem !important;
+  margin-left: auto !important;
+}
+
+/* "More options" button */
+.wallet-adapter-modal-list-more {
+  background: transparent !important;
+  border: 1.5px solid #4a4640 !important;
+  border-radius: 0.625rem !important;
+  color: #b8a896 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.85rem !important;
+  padding: 0.6rem 1rem !important;
+  width: 100% !important;
+  margin-top: 0.5rem !important;
+  cursor: pointer !important;
+  transition: border-color 0.2s, color 0.2s !important;
+}
+
+.wallet-adapter-modal-list-more:hover {
+  border-color: #6b6359 !important;
+  color: #f5ede0 !important;
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [filter='url(#sketchy)'],
+  [filter='url(#sketchy-heavy)'],
+  [filter='url(#pencil)'] {
+    filter: none !important;
+  }
+}
