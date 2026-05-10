@@ -133,6 +133,53 @@ export async function ensureOnchainMarket(
   return (await res.json()) as OnchainMarketEntry
 }
 
+export interface ResolveMarketResult {
+  kalshiTicker: string
+  truthFunMarket: string
+  fundedUsdc: number
+  fundSig: string | null
+  settleSig: string
+  winningSide: 'yes' | 'no' | 'undecided'
+}
+
+export async function resolveOnchainMarket(opts: {
+  kalshiTicker: string
+  winningSide: 'yes' | 'no' | 'undecided'
+  fundUsdc?: number
+  /** Bypass wall-clock pre-flight in resolveMarket — used after time-travel. */
+  skipCloseCheck?: boolean
+}): Promise<ResolveMarketResult> {
+  const res = await fetch(`${BACKEND_URL}/api/markets/resolve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(opts),
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`backend ${res.status}: ${body.slice(0, 200)}`)
+  }
+  return (await res.json()) as ResolveMarketResult
+}
+
+/**
+ * Surfpool-only: jump the on-chain Clock past `absoluteTimestamp` (Unix seconds).
+ * Returns true on success, false on standard validators that don't implement
+ * the surfnet_timeTravel RPC.
+ */
+export async function timeTravelChain(absoluteTimestamp: number): Promise<boolean> {
+  const res = await fetch(`${BACKEND_URL}/api/markets/time-travel`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ absoluteTimestamp }),
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`backend ${res.status}: ${body.slice(0, 200)}`)
+  }
+  const body = (await res.json()) as { ok: boolean }
+  return body.ok
+}
+
 // ─── PDA helpers (mirror backend's anchor-client.ts) ────────────────────────
 
 function pda(
