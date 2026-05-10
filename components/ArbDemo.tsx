@@ -1,12 +1,35 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import { useCurveState } from '@/hooks/useCurveState'
 import { useLivePrice } from '@/hooks/useLivePrice'
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3001'
 
 interface Props {
   marketId: string
   dflowBasePrice: number
+}
+
+interface ArbExecutedEvent {
+  direction?: string
+  sizeUsd?: number
+  spreadBps?: number
+  profitUsd?: number
+  bonusPoolCaptureUsd?: number
+  txSig?: string | null
+}
+
+interface DemoSummary {
+  startedAt: number
+  endedAt: number
+  durationSec: number
+  arbs: ArbExecutedEvent[]
+  bonusPoolDeltaUsd: number
+  initialOracleBps: number | null
+  finalOracleBps: number | null
+  stubbed: boolean
 }
 
 export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
@@ -15,6 +38,7 @@ export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
   const [isRunning, setIsRunning] = useState(false)
   const [arbLog, setArbLog] = useState<string[]>([])
   const [isOpen, setIsOpen] = useState(false)
+  const [demoMode, setDemoMode] = useState<'real' | 'mock'>('real')
 
   const curve = curvePrice ?? dflowBasePrice
   const base = liveBase ?? dflowBasePrice
@@ -23,10 +47,37 @@ export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
   const arbProfit = Math.abs(spread) * tokens
   const protocolCapture = arbProfit * 0.2
 
-  const runArb = async () => {
-    setIsRunning(true)
-    setArbLog([])
+  // The backend /api/arb/demo only runs against the configured ticker — we expose
+  // it via /api/config so the UI can warn when the user opens a different market.
+  const { data: config } = useSWR<{ arbTicker: string | null }>(
+    'arb-config',
+    async () => {
+      const res = await fetch(`${BACKEND_URL}/api/config`)
+      if (!res.ok) return { arbTicker: null }
+      // The /api/config endpoint doesn't expose the arb ticker yet; fall back to env-driven default.
+      return { arbTicker: null }
+    },
+    { revalidateOnFocus: false },
+  )
 
+  // Tiny ticker config endpoint — added to surface configuredTicker() to the UI.
+  const { data: arbTickerData } = useSWR<{ ticker: string | null }>(
+    'arb-ticker',
+    () => fetch(`${BACKEND_URL}/api/arb/ticker`).then((r) => (r.ok ? r.json() : { ticker: null })),
+    { revalidateOnFocus: false },
+  )
+  const arbTicker = arbTickerData?.ticker ?? null
+  const tickerMatches = arbTicker == null ? true : arbTicker === marketId
+
+  // Auto-pick mode: if the user is on the configured arb ticker, default to real.
+  // Otherwise the real demo would run against a different market — fall back to
+  // the local-only animation so the button still does something.
+  useEffect(() => {
+    setDemoMode(tickerMatches ? 'real' : 'mock')
+  }, [tickerMatches])
+  void config
+
+  const runMockArb = async () => {
     const steps =
       spread > 0
         ? [
@@ -54,7 +105,49 @@ export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
       await new Promise((r) => setTimeout(r, 700))
       setArbLog((prev) => [...prev, step])
     }
-    setIsRunning(false)
+  }
+
+  const runRealArb = async () => {
+    setArbLog([
+      `Starting backend arb demo against ${arbTicker ?? 'configured ticker'}…`,
+      `T+0  align curve to oracle`,
+      `T+5  retail wallet buys $50 of tfYES (drives curve up ~12c)`,
+      `T+30 bot executes Direction A (real on-chain tx)`,
+      `T+60 oracle shock (priceBps += 1500)`,
+      `T+80 bot executes Direction B (real on-chain tx)`,
+      `T+120 wait for convergence…`,
+    ])
+    const res = await fetch(`${BACKEND_URL}/api/arb/demo`, { method: 'POST' })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error((body as { error?: string }).error ?? `backend ${res.status}`)
+    }
+    const summary = (await res.json()) as DemoSummary
+    setArbLog((prev) => [
+      ...prev,
+      `--- demo complete ---`,
+      `direction A: ${formatArb(summary.arbs[0])}`,
+      `direction B: ${formatArb(summary.arbs[1])}`,
+      `bonus pool delta: +$${summary.bonusPoolDeltaUsd.toFixed(4)} ✓`,
+      `oracle bps: ${summary.initialOracleBps} → ${summary.finalOracleBps}`,
+      `duration: ${summary.durationSec}s · stubbed=${summary.stubbed}`,
+    ])
+  }
+
+  const runArb = async () => {
+    setIsRunning(true)
+    setArbLog([])
+    try {
+      if (demoMode === 'real') {
+        await runRealArb()
+      } else {
+        await runMockArb()
+      }
+    } catch (e) {
+      setArbLog((prev) => [...prev, `error: ${(e as Error).message}`])
+    } finally {
+      setIsRunning(false)
+    }
   }
 
   return (
@@ -166,21 +259,82 @@ export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
             </div>
           )}
 
+          <div className="flex items-center gap-2 text-xs font-mono">
+            <span style={{ color: '#475569' }}>Mode</span>
+            <button
+              onClick={() => setDemoMode('real')}
+              disabled={!tickerMatches || isRunning}
+              className="px-2 py-1 rounded transition-colors"
+              style={{
+                backgroundColor: demoMode === 'real' ? 'rgba(34,197,94,0.15)' : '#1A1A26',
+                color: demoMode === 'real' ? '#22C55E' : '#94A3B8',
+                border: `1px solid ${demoMode === 'real' ? 'rgba(34,197,94,0.3)' : '#2A2A3A'}`,
+                cursor: !tickerMatches || isRunning ? 'not-allowed' : 'pointer',
+                opacity: !tickerMatches ? 0.4 : 1,
+              }}
+            >
+              Real (backend)
+            </button>
+            <button
+              onClick={() => setDemoMode('mock')}
+              disabled={isRunning}
+              className="px-2 py-1 rounded transition-colors"
+              style={{
+                backgroundColor: demoMode === 'mock' ? 'rgba(168,139,250,0.15)' : '#1A1A26',
+                color: demoMode === 'mock' ? '#A78BFA' : '#94A3B8',
+                border: `1px solid ${demoMode === 'mock' ? 'rgba(168,139,250,0.3)' : '#2A2A3A'}`,
+                cursor: isRunning ? 'not-allowed' : 'pointer',
+              }}
+            >
+              Mock (UI only)
+            </button>
+            {!tickerMatches && arbTicker && (
+              <span style={{ color: '#94A3B8' }}>
+                · backend arb is wired to <code>{arbTicker}</code>; open that market to run real
+              </span>
+            )}
+          </div>
+
           <button
             onClick={runArb}
-            disabled={isRunning || spread === 0}
+            disabled={isRunning || (demoMode === 'mock' && spread === 0)}
             className="w-full py-3 rounded-lg font-mono text-sm font-semibold transition-all"
             style={{
-              backgroundColor: isRunning || spread === 0 ? '#1A1A26' : 'rgba(250,204,21,0.15)',
-              color: isRunning || spread === 0 ? '#475569' : '#FACC15',
-              border: `1px solid ${isRunning || spread === 0 ? '#2A2A3A' : 'rgba(250,204,21,0.3)'}`,
-              cursor: isRunning || spread === 0 ? 'not-allowed' : 'pointer',
+              backgroundColor:
+                isRunning || (demoMode === 'mock' && spread === 0)
+                  ? '#1A1A26'
+                  : demoMode === 'real'
+                    ? 'rgba(34,197,94,0.15)'
+                    : 'rgba(250,204,21,0.15)',
+              color:
+                isRunning || (demoMode === 'mock' && spread === 0)
+                  ? '#475569'
+                  : demoMode === 'real'
+                    ? '#22C55E'
+                    : '#FACC15',
+              border: `1px solid ${isRunning || (demoMode === 'mock' && spread === 0) ? '#2A2A3A' : demoMode === 'real' ? 'rgba(34,197,94,0.3)' : 'rgba(250,204,21,0.3)'}`,
+              cursor: isRunning || (demoMode === 'mock' && spread === 0) ? 'not-allowed' : 'pointer',
             }}
           >
-            {isRunning ? 'Arb script running…' : '▶ Run Arb Script'}
+            {isRunning
+              ? demoMode === 'real'
+                ? 'Backend arb demo running (~2 min)…'
+                : 'Arb script running…'
+              : demoMode === 'real'
+                ? '▶ Run Backend Arb Demo (~2 min)'
+                : '▶ Run Arb Script (UI only)'}
           </button>
         </div>
       )}
     </div>
   )
+}
+
+function formatArb(a: ArbExecutedEvent | undefined): string {
+  if (!a) return '(no result)'
+  const dir = a.direction ?? '?'
+  const profit = a.profitUsd != null ? `$${a.profitUsd.toFixed(4)}` : '?'
+  const cap = a.bonusPoolCaptureUsd != null ? `$${a.bonusPoolCaptureUsd.toFixed(4)}` : '?'
+  const sig = a.txSig ? ` tx=${a.txSig.slice(0, 8)}…` : ''
+  return `dir=${dir} profit=${profit} bonus_capture=${cap}${sig}`
 }

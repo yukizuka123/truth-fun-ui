@@ -1,7 +1,6 @@
 'use client'
 
 import { FloatingDoodles } from '@/components/ui/FloatingDoodles'
-import { Navbar } from '@/components/landing/Navbar'
 import { Hero } from '@/components/landing/Hero'
 import { MarqueeTicker } from '@/components/ui/MarqueeTicker'
 import { FeaturedMarkets } from '@/components/landing/FeaturedMarkets'
@@ -46,7 +45,6 @@ export default function Home() {
   return (
     <>
       <FloatingDoodles />
-      <Navbar />
       <Hero />
       {tickerItems.length > 0 && <MarqueeTicker items={tickerItems} />}
       <FeaturedMarkets events={featuredEvents} loading={isLoading} />

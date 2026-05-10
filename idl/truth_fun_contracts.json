@@ -1,0 +1,2268 @@
+{
+  "address": "aCMSfGrEFGzb25yYWEvTbDJEL7mdnw1W5ocw2w3ji5q",
+  "metadata": {
+    "name": "truth_fun_contracts",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "buy_no",
+      "discriminator": [
+        89,
+        240,
+        244,
+        16,
+        196,
+        201,
+        190,
+        163
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_no_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_usdc",
+          "writable": true
+        },
+        {
+          "name": "user_tf_no",
+          "docs": [
+            "Created as an ATA on first buy if it doesn't exist yet"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "tf_no_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "usdc_in",
+          "type": "u64"
+        },
+        {
+          "name": "min_no_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "buy_yes",
+      "discriminator": [
+        124,
+        76,
+        113,
+        130,
+        177,
+        112,
+        187,
+        104
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_yes_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_usdc",
+          "docs": [
+            "User's USDC source — must already exist (user needs funds to buy)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_tf_yes",
+          "docs": [
+            "User's tfYES destination — created as an ATA on first buy if it doesn't exist yet"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "tf_yes_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "usdc_in",
+          "type": "u64"
+        },
+        {
+          "name": "min_yes_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "claim_no_payout",
+      "docs": [
+        "Burn tfNO, receive proportional USDC from the shared vault (NO winner)."
+      ],
+      "discriminator": [
+        79,
+        18,
+        144,
+        69,
+        110,
+        9,
+        47,
+        43
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_no_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "usdc_vault",
+          "docs": [
+            "Same single vault as claim/yes.rs — both sides draw from here."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_tf_no",
+          "writable": true
+        },
+        {
+          "name": "user_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "claim_payout",
+      "docs": [
+        "Burn tfYES, receive proportional USDC from the shared vault (YES winner)."
+      ],
+      "discriminator": [
+        127,
+        240,
+        132,
+        62,
+        227,
+        198,
+        146,
+        133
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_yes_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_tf_yes",
+          "writable": true
+        },
+        {
+          "name": "user_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "create_market",
+      "docs": [
+        "Seeds both YES and NO bonding curves with virtual-reserve pricing.",
+        "No USDC deposit needed — platform cost ≈ $0 (market-neutral dflow purchase).",
+        "dflow_yes_price_bps: Kalshi YES price in bps (e.g. 6500 = $0.65)",
+        "dflow_no_price_bps:  Kalshi NO  price in bps (e.g. 3500 = $0.35)"
+      ],
+      "discriminator": [
+        103,
+        226,
+        97,
+        235,
+        200,
+        188,
+        251,
+        254
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "platform",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  116,
+                  102,
+                  111,
+                  114,
+                  109
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "dflow_yes_mint"
+        },
+        {
+          "name": "dflow_no_mint"
+        },
+        {
+          "name": "settlement_mint"
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "dflow_yes_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_yes_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  102,
+                  95,
+                  121,
+                  101,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dflow_yes_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  121,
+                  101,
+                  115,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_no_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  102,
+                  95,
+                  110,
+                  111,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dflow_no_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  110,
+                  111,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority_dflow_yes",
+          "writable": true
+        },
+        {
+          "name": "authority_dflow_no",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "close_time",
+          "type": "i64"
+        },
+        {
+          "name": "seed_yes_amount",
+          "type": "u64"
+        },
+        {
+          "name": "seed_no_amount",
+          "type": "u64"
+        },
+        {
+          "name": "dflow_yes_price_bps",
+          "type": "u64"
+        },
+        {
+          "name": "dflow_no_price_bps",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_dflow_no",
+      "discriminator": [
+        227,
+        165,
+        153,
+        39,
+        162,
+        90,
+        68,
+        199
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_no_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "dflow_no_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  110,
+                  111,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_dflow_no",
+          "writable": true
+        },
+        {
+          "name": "user_tf_no",
+          "docs": [
+            "User's tfNO destination — created as ATA on first deposit if needed"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "tf_no_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_dflow_yes",
+      "discriminator": [
+        124,
+        133,
+        113,
+        162,
+        32,
+        22,
+        56,
+        195
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_yes_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "dflow_yes_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  121,
+                  101,
+                  115,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_dflow_yes",
+          "docs": [
+            "User's dflowYES source — must exist (they're depositing what they already have)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_tf_yes",
+          "docs": [
+            "User's tfYES destination — created as ATA on first deposit if needed"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "tf_yes_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_resolution_usdc",
+      "docs": [
+        "Keeper deposits DFlow redemption USDC into the single shared vault.",
+        "Use for both YES wins and NO wins — same instruction, same vault."
+      ],
+      "discriminator": [
+        234,
+        126,
+        106,
+        184,
+        87,
+        82,
+        147,
+        126
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_platform",
+      "discriminator": [
+        119,
+        201,
+        101,
+        45,
+        75,
+        122,
+        89,
+        3
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "platform",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  116,
+                  102,
+                  111,
+                  114,
+                  109
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "docs": [
+            "TODO: it should be platform owned account, will update later"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "vig_bps",
+          "type": "u16"
+        },
+        {
+          "name": "redemption_fee_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "mark_resolved",
+      "docs": [
+        "Settle the market: snapshot vault.amount as the resolution pot.",
+        "No vault transfer — the single vault already holds everything."
+      ],
+      "discriminator": [
+        127,
+        161,
+        161,
+        97,
+        6,
+        116,
+        35,
+        239
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_vault",
+          "docs": [
+            "Read vault.amount to snapshot the resolution pot."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "winning_side",
+          "type": {
+            "defined": {
+              "name": "WinningSide"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "sell_no",
+      "discriminator": [
+        189,
+        194,
+        132,
+        42,
+        80,
+        249,
+        154,
+        103
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_no_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_tf_no",
+          "writable": true
+        },
+        {
+          "name": "user_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "no_in",
+          "type": "u64"
+        },
+        {
+          "name": "min_usdc_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "sell_yes",
+      "discriminator": [
+        128,
+        214,
+        65,
+        190,
+        69,
+        69,
+        53,
+        8
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tf_yes_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_tf_yes",
+          "writable": true
+        },
+        {
+          "name": "user_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "yes_in",
+          "type": "u64"
+        },
+        {
+          "name": "min_usdc_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_dflow_no",
+      "discriminator": [
+        98,
+        15,
+        250,
+        5,
+        35,
+        18,
+        187,
+        36
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dflow_no_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  110,
+                  111,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority_dflow_no",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_dflow_yes",
+      "discriminator": [
+        138,
+        177,
+        154,
+        68,
+        120,
+        104,
+        210,
+        69
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.dflow_yes_mint",
+                "account": "Market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dflow_yes_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  121,
+                  101,
+                  115,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority_dflow_yes",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Market",
+      "discriminator": [
+        219,
+        190,
+        213,
+        55,
+        0,
+        227,
+        198,
+        154
+      ]
+    },
+    {
+      "name": "PlatformConfig",
+      "discriminator": [
+        160,
+        78,
+        128,
+        0,
+        248,
+        83,
+        230,
+        160
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "MarketNotActive",
+      "msg": "Market is not active"
+    },
+    {
+      "code": 6001,
+      "name": "MarketNotResolved",
+      "msg": "Market is not resolved yet"
+    },
+    {
+      "code": 6002,
+      "name": "MarketClosed",
+      "msg": "No buys allowed after close_time"
+    },
+    {
+      "code": 6003,
+      "name": "MarketStillOpen",
+      "msg": "Market close_time has not been reached yet"
+    },
+    {
+      "code": 6004,
+      "name": "AlreadyResolved",
+      "msg": "Market is already resolved"
+    },
+    {
+      "code": 6005,
+      "name": "SlippageExceeded",
+      "msg": "Slippage tolerance exceeded"
+    },
+    {
+      "code": 6006,
+      "name": "WrongSettlementMint",
+      "msg": "Settlement mint does not match market.settlement_mint"
+    },
+    {
+      "code": 6007,
+      "name": "WrongDflowYesMint",
+      "msg": "DFlow yes mint does not match market.dflow_yes_mint"
+    },
+    {
+      "code": 6008,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientLiquidity",
+      "msg": "Pool has insufficient liquidity for this trade"
+    },
+    {
+      "code": 6010,
+      "name": "Unauthorized",
+      "msg": "Caller is not the market authority"
+    },
+    {
+      "code": 6011,
+      "name": "ZeroAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6012,
+      "name": "ResolutionNotFunded",
+      "msg": "Deposit resolution USDC before calling mark_resolved for a YES winner"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidCloseTime",
+      "msg": "close_time must be in the future"
+    },
+    {
+      "code": 6014,
+      "name": "InsufficientRealLiquidity",
+      "msg": "Not enough real USDC in pool yet — wait for buy volume to accumulate"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidPrice",
+      "msg": "Price bps must be between 1 and 9999 (0.01% – 99.99%)"
+    },
+    {
+      "code": 6016,
+      "name": "MarketVoid",
+      "msg": "Market was voided (Undecided) — tokens cannot be burned, no payout available"
+    }
+  ],
+  "types": [
+    {
+      "name": "Market",
+      "docs": [
+        "Single-vault design:",
+        "",
+        "usdc_vault holds ALL USDC from both YES and NO curve activity plus",
+        "the keeper's DFlow redemption deposit.",
+        "",
+        "vault.amount invariant (holds at every instruction boundary):",
+        "vault = curve_usdc_reserve   (YES buyers net)",
+        "+ bonus_pool_usdc      (YES vig)",
+        "+ curve_no_reserve     (NO buyers net)",
+        "+ bonus_pool_no_usdc   (NO vig)",
+        "+ resolution_usdc_deposited  (keeper DFlow redemption proceeds)",
+        "",
+        "At mark_resolved, total_resolution_pot = vault.amount (snapshotted once).",
+        "Both YES and NO claims draw from the same pot with their respective",
+        "supply denominators, so no cross-vault transfer is ever needed."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "dflow_yes_mint",
+            "docs": [
+              "Seeds this market PDA: [b\"market\", dflow_yes_mint]."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "dflow_no_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "settlement_mint",
+            "docs": [
+              "Settlement stablecoin — USDC."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "tf_yes_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "curve_yes_supply",
+            "docs": [
+              "x — tfYES unissued pool supply"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "virtual_yes_reserve",
+            "docs": [
+              "Virtual USDC reserve — anchors the curve to the Kalshi starting price.",
+              "NOT held in the vault. = seed_yes × dflow_yes_price_bps / 10_000"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "curve_usdc_reserve",
+            "docs": [
+              "YES buyers' net USDC in usdc_vault. Effective YES price uses virtual + this."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "k",
+            "docs": [
+              "k_yes = seed_yes × virtual_yes_reserve, immutable after creation."
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "total_dflow_yes_locked",
+            "type": "u64"
+          },
+          {
+            "name": "total_tf_yes_minted",
+            "type": "u64"
+          },
+          {
+            "name": "resolution_usdc_deposited",
+            "docs": [
+              "Keeper's DFlow YES/NO redemption USDC deposited before mark_resolved."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_tf_yes_at_resolution",
+            "docs": [
+              "Frozen at mark_resolved — denominator for YES claim payouts."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "tf_no_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "curve_no_supply",
+            "type": "u64"
+          },
+          {
+            "name": "virtual_no_reserve",
+            "docs": [
+              "virtual_no_reserve = seed_no × dflow_no_price_bps / 10_000"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "curve_no_reserve",
+            "docs": [
+              "NO buyers' net USDC in usdc_vault (same vault as YES)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "k_no",
+            "type": "u128"
+          },
+          {
+            "name": "total_dflow_no_locked",
+            "type": "u64"
+          },
+          {
+            "name": "total_tf_no_minted",
+            "type": "u64"
+          },
+          {
+            "name": "total_tf_no_at_resolution",
+            "docs": [
+              "Frozen at mark_resolved — denominator for NO claim payouts."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bonus_pool_usdc",
+            "docs": [
+              "1% vig from trades — stays in usdc_vault, included in resolution pot."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_resolution_pot",
+            "docs": [
+              "Snapshotted at mark_resolved = usdc_vault.amount at that moment.",
+              "Stable divisor: claims never race because this doesn't change post-settle.",
+              "",
+              "For YES winner: payout = amount × pot / total_tf_yes_at_resolution",
+              "For NO  winner: payout = amount × pot / total_tf_no_at_resolution"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "close_time",
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "MarketStatus"
+              }
+            }
+          },
+          {
+            "name": "winning_side",
+            "type": {
+              "defined": {
+                "name": "WinningSide"
+              }
+            }
+          },
+          {
+            "name": "vig_bps",
+            "type": "u16"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "platform",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Resolved"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlatformConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury",
+            "type": "pubkey"
+          },
+          {
+            "name": "vig_bps",
+            "docs": [
+              "Trading vig in basis points (100 = 1%)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "redemption_fee_bps",
+            "docs": [
+              "Mid-market redemption fee in basis points (50 = 0.5%)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WinningSide",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Undecided"
+          },
+          {
+            "name": "Yes"
+          },
+          {
+            "name": "No"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -8,7 +8,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ReferenceLine,
   CartesianGrid,
 } from 'recharts'
 import { useCurveState } from '@/hooks/useCurveState'
@@ -16,7 +15,8 @@ import { useLivePrice } from '@/hooks/useLivePrice'
 
 interface DataPoint {
   time: string
-  curvePrice: number
+  yesPrice: number
+  noPrice: number
   dflowBase: number
 }
 
@@ -44,23 +44,34 @@ const CustomTooltip = ({ active, payload }: any) => {
 }
 
 export default function PriceChart({ marketId, dflowBasePrice }: Props) {
-  const { curvePrice } = useCurveState(marketId)
+  const { yesPrice, noPrice } = useCurveState(marketId)
   const liveBase = useLivePrice(marketId)
   const [history, setHistory] = useState<DataPoint[]>([])
 
+  // Sample on a fixed timer (not on dependency change) so the chart accumulates
+  // points during flat periods too. Without this, prolonged flat stretches
+  // produce zero datapoints and the chart looks "dead" until the next change.
   useEffect(() => {
-    const now = new Date()
-    const label = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-    const cp = curvePrice ?? dflowBasePrice
-    const db = liveBase ?? dflowBasePrice
+    const tick = () => {
+      const now = new Date()
+      const label = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+      const yp = yesPrice ?? dflowBasePrice
+      const np = noPrice ?? Math.max(0, 1 - dflowBasePrice)
+      const db = liveBase ?? dflowBasePrice
+      setHistory((prev) => {
+        const next = [...prev, { time: label, yesPrice: yp, noPrice: np, dflowBase: db }]
+        return next.slice(-120) // ~6 min at 3s sampling
+      })
+    }
+    tick() // emit immediately so axes initialize
+    const id = setInterval(tick, 3000)
+    return () => clearInterval(id)
+  }, [yesPrice, noPrice, liveBase, dflowBasePrice])
 
-    setHistory((prev) => {
-      const next = [...prev, { time: label, curvePrice: cp, dflowBase: db }]
-      return next.slice(-60)
-    })
-  }, [curvePrice, liveBase, dflowBasePrice])
-
-  const spread = (curvePrice ?? dflowBasePrice) - (liveBase ?? dflowBasePrice)
+  const yesDisplay = yesPrice ?? dflowBasePrice
+  const noDisplay = noPrice ?? Math.max(0, 1 - dflowBasePrice)
+  const baseDisplay = liveBase ?? dflowBasePrice
+  const spread = yesDisplay - baseDisplay
 
   return (
     <div
@@ -68,13 +79,21 @@ export default function PriceChart({ marketId, dflowBasePrice }: Props) {
       style={{ backgroundColor: '#111118', border: '1px solid #2A2A3A' }}
     >
       <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
-        <div className="flex gap-6">
+        <div className="flex gap-6 flex-wrap">
           <div>
             <p className="text-xs uppercase tracking-widest font-mono mb-1" style={{ color: '#94A3B8' }}>
-              Curve Price
+              YES Curve
             </p>
             <p className="font-mono text-3xl font-bold" style={{ color: '#22C55E' }}>
-              ${(curvePrice ?? dflowBasePrice).toFixed(4)}
+              ${yesDisplay.toFixed(4)}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-widest font-mono mb-1" style={{ color: '#94A3B8' }}>
+              NO Curve
+            </p>
+            <p className="font-mono text-3xl font-bold" style={{ color: '#F59E0B' }}>
+              ${noDisplay.toFixed(4)}
             </p>
           </div>
           <div>
@@ -82,7 +101,7 @@ export default function PriceChart({ marketId, dflowBasePrice }: Props) {
               DFlow Base
             </p>
             <p className="font-mono text-3xl font-bold" style={{ color: '#A78BFA' }}>
-              ${(liveBase ?? dflowBasePrice).toFixed(4)}
+              ${baseDisplay.toFixed(4)}
             </p>
           </div>
         </div>
@@ -94,14 +113,18 @@ export default function PriceChart({ marketId, dflowBasePrice }: Props) {
             border: `1px solid ${spread >= 0 ? 'rgba(250,204,21,0.3)' : 'rgba(239,68,68,0.3)'}`,
           }}
         >
-          {spread >= 0 ? '+' : ''}${spread.toFixed(4)} vs DFlow base
+          {spread >= 0 ? '+' : ''}${spread.toFixed(4)} YES vs DFlow base
         </div>
       </div>
 
-      <div className="flex gap-4 mb-3">
+      <div className="flex gap-4 mb-3 flex-wrap">
         <div className="flex items-center gap-2">
           <div className="w-3 h-0.5 rounded" style={{ backgroundColor: '#22C55E' }} />
-          <span className="text-xs font-mono" style={{ color: '#94A3B8' }}>truth.fun curve</span>
+          <span className="text-xs font-mono" style={{ color: '#94A3B8' }}>YES curve</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-0.5 rounded" style={{ backgroundColor: '#F59E0B' }} />
+          <span className="text-xs font-mono" style={{ color: '#94A3B8' }}>NO curve</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-0.5 rounded" style={{ backgroundColor: '#8B5CF6' }} />
@@ -120,7 +143,10 @@ export default function PriceChart({ marketId, dflowBasePrice }: Props) {
             interval="preserveStartEnd"
           />
           <YAxis
-            domain={['auto', 'auto']}
+            domain={[
+              (dataMin: number) => Math.max(0, Math.floor((dataMin - 0.02) * 100) / 100),
+              (dataMax: number) => Math.min(1, Math.ceil((dataMax + 0.02) * 100) / 100),
+            ]}
             tick={{ fill: '#475569', fontSize: 10, fontFamily: 'monospace' }}
             tickLine={false}
             axisLine={false}
@@ -130,11 +156,19 @@ export default function PriceChart({ marketId, dflowBasePrice }: Props) {
           <Tooltip content={<CustomTooltip />} />
           <Line
             type="monotone"
-            dataKey="curvePrice"
+            dataKey="yesPrice"
             stroke="#22C55E"
             strokeWidth={2}
             dot={false}
-            name="Curve Price"
+            name="YES Curve"
+          />
+          <Line
+            type="monotone"
+            dataKey="noPrice"
+            stroke="#F59E0B"
+            strokeWidth={2}
+            dot={false}
+            name="NO Curve"
           />
           <Line
             type="monotone"

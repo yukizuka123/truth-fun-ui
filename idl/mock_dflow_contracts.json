@@ -1,0 +1,1112 @@
+{
+  "address": "7oYNdudvPY3j84xyfWGRQ1a67d2xMZqvhrhiv6R9RMY8",
+  "metadata": {
+    "name": "mock_dflow_contracts",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "fund_usdc_vault",
+      "docs": [
+        "Keeper deposits USDC into the vault so redeem_* can pay out at $1/token.",
+        "Call this before resolve_market to ensure the vault is sufficiently funded."
+      ],
+      "discriminator": [
+        155,
+        174,
+        52,
+        148,
+        48,
+        102,
+        147,
+        107
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.market_id",
+                "account": "MockDflowMarket"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_dflow_market",
+      "docs": [
+        "Create a mock DFlow market for a single Kalshi event.",
+        "",
+        "Keeper sequence before calling this:",
+        "1. Generate a fresh Pubkey as `market_id` (one per Kalshi event)",
+        "2. Supply current Kalshi YES/NO prices in bps",
+        "3. Call `fund_usdc_vault` to pre-load USDC for future redemptions",
+        "",
+        "The resulting yes_mint and no_mint are the tokens that Truth.fun's",
+        "create_market expects as dflow_yes_mint / dflow_no_mint."
+      ],
+      "discriminator": [
+        231,
+        184,
+        132,
+        137,
+        161,
+        91,
+        231,
+        187
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "market_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "settlement_mint"
+        },
+        {
+          "name": "yes_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  121,
+                  101,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "no_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  110,
+                  111,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "market_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "yes_price_bps",
+          "type": "u64"
+        },
+        {
+          "name": "no_price_bps",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint_no",
+      "docs": [
+        "Authority mints dflowNO to any recipient token account and updates",
+        "the price feed in the same instruction.",
+        "",
+        "See `mint_yes` for the price parameter contract."
+      ],
+      "discriminator": [
+        120,
+        57,
+        184,
+        64,
+        202,
+        160,
+        47,
+        122
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.market_id",
+                "account": "MockDflowMarket"
+              }
+            ]
+          }
+        },
+        {
+          "name": "no_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  110,
+                  111,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "recipient_no",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "new_yes_price_bps",
+          "type": "u64"
+        },
+        {
+          "name": "new_no_price_bps",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint_yes",
+      "docs": [
+        "Authority mints dflowYES to any recipient token account and updates",
+        "the price feed in the same instruction.",
+        "",
+        "`new_yes_price_bps` / `new_no_price_bps` come directly from the DFlow",
+        "Trade API response (`yes_price` / `no_price` fields on each trade event).",
+        "When using the local user-simulator fallback, pass the desired price bps.",
+        "",
+        "Price validation mirrors `update_price`:",
+        "- each side in (0, 10_000)",
+        "- sum in [9_500, 10_500]"
+      ],
+      "discriminator": [
+        83,
+        157,
+        230,
+        105,
+        53,
+        202,
+        135,
+        72
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.market_id",
+                "account": "MockDflowMarket"
+              }
+            ]
+          }
+        },
+        {
+          "name": "yes_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  121,
+                  101,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "recipient_yes",
+          "docs": [
+            "Recipient's dflowYES token account — must already exist."
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "new_yes_price_bps",
+          "type": "u64"
+        },
+        {
+          "name": "new_no_price_bps",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "redeem_no",
+      "docs": [
+        "Burn dflowNO and receive USDC at $1 per token (only when NO won)."
+      ],
+      "discriminator": [
+        63,
+        96,
+        165,
+        115,
+        78,
+        130,
+        228,
+        45
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.market_id",
+                "account": "MockDflowMarket"
+              }
+            ]
+          }
+        },
+        {
+          "name": "no_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  110,
+                  111,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_no",
+          "writable": true
+        },
+        {
+          "name": "user_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "redeem_yes",
+      "docs": [
+        "Burn dflowYES and receive USDC at $1 per token (only when YES won).",
+        "",
+        "Keeper flow:",
+        "1. truth_fun: withdraw_dflow_yes  → keeper wallet gets dflowYES",
+        "2. mock:      redeem_yes          → burns dflowYES, receives USDC",
+        "3. truth_fun: deposit_resolution_usdc → USDC enters YES resolution vault"
+      ],
+      "discriminator": [
+        147,
+        20,
+        112,
+        14,
+        117,
+        50,
+        201,
+        30
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.market_id",
+                "account": "MockDflowMarket"
+              }
+            ]
+          }
+        },
+        {
+          "name": "yes_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  121,
+                  101,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  117,
+                  115,
+                  100,
+                  99,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_yes",
+          "writable": true
+        },
+        {
+          "name": "user_usdc",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "resolve_market",
+      "docs": [
+        "Authority marks the Kalshi event outcome.",
+        "After this, only the winning-side tokens can be redeemed for USDC."
+      ],
+      "discriminator": [
+        155,
+        23,
+        80,
+        173,
+        46,
+        74,
+        23,
+        239
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.market_id",
+                "account": "MockDflowMarket"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "winning_side",
+          "type": {
+            "defined": {
+              "name": "WinningSide"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_price",
+      "docs": [
+        "Arb bot updates the mock Kalshi price feed.",
+        "Called whenever the real Kalshi price moves enough to warrant an update."
+      ],
+      "discriminator": [
+        61,
+        34,
+        117,
+        155,
+        75,
+        34,
+        123,
+        208
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  102,
+                  108,
+                  111,
+                  119,
+                  95,
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market.market_id",
+                "account": "MockDflowMarket"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "yes_price_bps",
+          "type": "u64"
+        },
+        {
+          "name": "no_price_bps",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "MockDflowMarket",
+      "discriminator": [
+        116,
+        25,
+        34,
+        212,
+        113,
+        69,
+        189,
+        19
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Caller is not the market authority"
+    },
+    {
+      "code": 6001,
+      "name": "ZeroAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidPrice",
+      "msg": "Price bps must be 1–9999 and YES+NO must sum to 9500–10500"
+    },
+    {
+      "code": 6003,
+      "name": "MarketAlreadyResolved",
+      "msg": "Market is already resolved"
+    },
+    {
+      "code": 6004,
+      "name": "MarketNotResolved",
+      "msg": "Market is not resolved yet"
+    },
+    {
+      "code": 6005,
+      "name": "WrongWinningSide",
+      "msg": "Wrong winning side — these tokens are worthless"
+    },
+    {
+      "code": 6006,
+      "name": "InsufficientVault",
+      "msg": "USDC vault has insufficient balance for redemption"
+    },
+    {
+      "code": 6007,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    }
+  ],
+  "types": [
+    {
+      "name": "MockDflowMarket",
+      "docs": [
+        "On-chain state for one mock DFlow market.",
+        "",
+        "Mirrors the minimal DFlow market structure needed by Truth.fun:",
+        "- yesMint / noMint  →  dflowYES / dflowNO SPL mints",
+        "- USDC vault        →  holds redemption capital deposited by keeper",
+        "- price bps         →  mock Kalshi price feed updated by arb bot",
+        "",
+        "PDA seeds: [b\"dflow_market\", market_id]",
+        "where market_id is a caller-supplied Pubkey (unique per Kalshi event)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Keeper wallet that controls this market."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "market_id",
+            "docs": [
+              "Unique per-market identifier — also used as PDA seed."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "settlement_mint",
+            "docs": [
+              "USDC (or any settlement token) mint."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "yes_mint",
+            "docs": [
+              "Mock dflowYES mint — PDA owned by this market."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "no_mint",
+            "docs": [
+              "Mock dflowNO mint — PDA owned by this market."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "usdc_vault",
+            "docs": [
+              "USDC vault — keeper deposits here before calling redeem_*."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "yes_price_bps",
+            "docs": [
+              "Current YES price in bps  (6500 = $0.65).  Updated by arb bot."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "no_price_bps",
+            "docs": [
+              "Current NO  price in bps  (3500 = $0.35)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_yes_minted",
+            "docs": [
+              "Total dflowYES tokens currently in circulation."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_no_minted",
+            "docs": [
+              "Total dflowNO tokens currently in circulation."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "is_resolved",
+            "type": "bool"
+          },
+          {
+            "name": "winning_side",
+            "type": {
+              "defined": {
+                "name": "WinningSide"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WinningSide",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Undecided"
+          },
+          {
+            "name": "Yes"
+          },
+          {
+            "name": "No"
+          }
+        ]
+      }
+    }
+  ]
+}

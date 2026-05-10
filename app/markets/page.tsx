@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Navbar } from '@/components/landing/Navbar'
 import { FilterBar } from '@/components/marketplace/FilterBar'
 import { MarketCard, MarketCardSkeleton } from '@/components/marketplace/MarketCard'
 import { SearchBox } from '@/components/marketplace/SearchBox'
@@ -38,7 +37,6 @@ export default function MarketsPage() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-bg pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-6">
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { SketchFilters } from '@/components/ui/SketchFilters'
 import { ClientProviders } from '@/components/ClientProviders'
+import TopHeader from '@/components/TopHeader'
 
 export const metadata: Metadata = {
   title: 'truth.fun — Prediction Markets with Bonding Curves',
@@ -26,7 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <SketchFilters />
-        <ClientProviders>{children}</ClientProviders>
+        <ClientProviders>
+          <TopHeader />
+          {children}
+        </ClientProviders>
       </body>
     </html>
   )
