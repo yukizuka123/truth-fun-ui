@@ -280,8 +280,8 @@ export async function getBonusPoolState(
   const snap = await fetchOnchainSnapshot(marketId).catch(() => null)
   if (!snap) return { balance: 0, totalVolume: 0, winningTokensOutstanding: 1 }
   const balance = Number(BigInt(snap.bonusPoolUsdc)) / D
-  // The contract doesn't expose lifetime volume directly; derive a lower bound
-  // from realized USDC reserve (volume of buys that haven't been sold yet).
+  // Current USDC sitting in both curve reserves — depth in play, not lifetime
+  // volume. The contract doesn't expose lifetime volume.
   const totalVolume =
     (Number(BigInt(snap.curveUsdcReserve)) +
       Number(BigInt(snap.curveNoReserve))) /

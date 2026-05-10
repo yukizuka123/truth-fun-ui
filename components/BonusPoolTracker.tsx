@@ -56,7 +56,7 @@ export default function BonusPoolTracker({ marketId, entryPrice = 0.6 }: Props) 
         </div>
         <div>
           <p className="text-xs font-mono" style={{ color: '#475569' }}>
-            Total volume
+            Curve reserves
           </p>
           <p className="font-mono text-white">${(totalVolume / 1000).toFixed(1)}K</p>
         </div>

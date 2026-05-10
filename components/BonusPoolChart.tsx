@@ -43,16 +43,21 @@ export default function BonusPoolChart({ marketId }: Props) {
   const { balance } = useBonusPool(marketId)
   const [history, setHistory] = useState<DataPoint[]>([])
 
+  // Sample on a fixed timer (mirrors PriceChart) so the chart accumulates
+  // points during flat periods. Keying off `balance` alone produced gaps
+  // whenever the pool was steady.
   useEffect(() => {
-    const now = new Date()
-    const mins = now.getMinutes()
-    const secs = now.getSeconds()
-    const label = `${mins}m ${secs}s`
-
-    setHistory((prev) => {
-      const next = [...prev, { time: label, pool: balance }]
-      return next.slice(-50)
-    })
+    const tick = () => {
+      const now = new Date()
+      const label = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+      setHistory((prev) => {
+        const next = [...prev, { time: label, pool: balance }]
+        return next.slice(-120)
+      })
+    }
+    tick()
+    const id = setInterval(tick, 3000)
+    return () => clearInterval(id)
   }, [balance])
 
   if (history.length < 2) {
