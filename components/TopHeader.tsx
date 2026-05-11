@@ -113,8 +113,6 @@ export default function TopHeader() {
         <div className="hidden lg:flex items-center gap-8">
           <Link href="/markets" className="font-ui text-sm font-medium text-ink-light hover:text-ink transition-colors">Markets</Link>
           <Link href="/#how-it-works" className="font-ui text-sm font-medium text-ink-light hover:text-ink transition-colors">How It Works</Link>
-          <Link href="#" className="font-ui text-sm font-medium text-ink-light hover:text-ink transition-colors">Leaderboard</Link>
-          <Link href="#" className="font-ui text-sm font-medium text-ink-light hover:text-ink transition-colors">Docs</Link>
         </div>
 
         {/* Right: theme + wallet/faucet */}
@@ -227,8 +225,6 @@ export default function TopHeader() {
         <div className="px-6 py-4 flex flex-col gap-3 bg-bg-secondary">
           <Link href="/markets" className="font-ui text-sm font-medium text-ink-light hover:text-ink" onClick={() => setMenuOpen(false)}>Markets</Link>
           <Link href="/#how-it-works" className="font-ui text-sm font-medium text-ink-light hover:text-ink" onClick={() => setMenuOpen(false)}>How It Works</Link>
-          <Link href="#" className="font-ui text-sm font-medium text-ink-light hover:text-ink" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
-          <Link href="#" className="font-ui text-sm font-medium text-ink-light hover:text-ink" onClick={() => setMenuOpen(false)}>Docs</Link>
           {connected && walletStat && (
             <div className="text-xs font-mono pt-2 border-t border-border" style={{ color: 'var(--ink-muted)' }}>
               {walletStat.sol.toFixed(3)} SOL · {walletStat.usdc.toFixed(2)} USDC
