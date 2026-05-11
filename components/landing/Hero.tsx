@@ -4,30 +4,6 @@ import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { SketchButton } from '@/components/ui/SketchButton'
 
-function useNumberScramble(target: number, duration = 800, active = true) {
-  const [val, setVal] = useState(0)
-  useEffect(() => {
-    if (!active) return
-    const start = performance.now()
-    const tick = (now: number) => {
-      const p = Math.min((now - start) / duration, 1)
-      setVal(Math.floor(p * target))
-      if (p < 1) requestAnimationFrame(tick)
-    }
-    requestAnimationFrame(tick)
-  }, [target, active])
-  return val
-}
-
-function StatBox({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="font-mono font-bold text-4xl md:text-5xl text-ink">{value.toLocaleString()}</div>
-      <div className="font-ui text-xs md:text-sm uppercase text-ink-light tracking-wider">{label}</div>
-    </div>
-  )
-}
-
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
@@ -36,10 +12,6 @@ export function Hero() {
     const t = setTimeout(() => setVisible(true), 100)
     return () => clearTimeout(t)
   }, [])
-
-  const vol = useNumberScramble(2847650, 1200, visible)
-  const markets = useNumberScramble(342, 900, visible)
-  const bonus = useNumberScramble(48720, 1000, visible)
 
   return (
     <section ref={ref} className="min-h-screen flex flex-col items-center justify-center px-6 py-24 pt-32 bg-bg relative overflow-hidden">
@@ -65,12 +37,6 @@ export function Hero() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={visible ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.5 }} className="flex flex-col md:flex-row gap-6 mb-16">
         <SketchButton primary>Start Trading</SketchButton>
         <SketchButton primary={false}>Create a Market</SketchButton>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={visible ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.7 }} className="flex flex-col md:flex-row gap-12 md:gap-20">
-        <StatBox label="Total Volume" value={vol} />
-        <StatBox label="Active Markets" value={markets} />
-        <StatBox label="Bonus Pool" value={bonus} />
       </motion.div>
 
       <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-ink-light font-body text-lg">
