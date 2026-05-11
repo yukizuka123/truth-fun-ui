@@ -111,7 +111,7 @@ export function MarketCard({ event, index = 0 }: MarketCardProps) {
             <span className="font-mono text-xs text-ink-muted">+{extraMarkets} more</span>
           )}
           <Link
-            href={`/event/${event.ticker}`}
+            href={`/markets/${primary?.ticker ?? event.ticker}`}
             className="font-ui font-medium text-xs text-accent-blue hover:text-accent-purple transition-colors"
           >
             View →

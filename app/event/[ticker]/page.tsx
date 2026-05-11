@@ -71,7 +71,7 @@ function MarketCard({ market }: { market: Market }) {
           Vol: <span className="font-mono text-ink font-semibold">{formatVolume(market.volumeFp, market.volume)}</span>
         </span>
         <Link
-          href={`/event/${encodeURIComponent(market.eventTicker)}`}
+          href={`/markets/${encodeURIComponent(market.ticker)}`}
           className="font-display font-bold text-accent-blue hover:text-accent-purple transition-colors group-hover:translate-x-0.5 inline-block"
         >
           View →

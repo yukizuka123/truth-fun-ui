@@ -13,10 +13,10 @@ interface LandingMarketCardProps {
   timeLeft: string
   index?: number
   hot?: boolean
-  eventTicker?: string
+  marketTicker?: string
 }
 
-export function LandingMarketCard({ question, yesPrice, noPrice, bonus, timeLeft, index = 0, hot = false, eventTicker }: LandingMarketCardProps) {
+export function LandingMarketCard({ question, yesPrice, noPrice, bonus, timeLeft, index = 0, hot = false, marketTicker }: LandingMarketCardProps) {
   const [yesClicked, setYesClicked] = useState(false)
   const [noClicked, setNoClicked] = useState(false)
   const rotation = useMemo(() => `${(Math.random() - 0.5) * 4}deg`, [])
@@ -46,9 +46,9 @@ export function LandingMarketCard({ question, yesPrice, noPrice, bonus, timeLeft
       </div>
       <div className="flex justify-between items-center mt-2 text-xs text-ink-muted font-mono">
         <span>{timeLeft}</span>
-        {eventTicker && (
+        {marketTicker && (
           <Link
-            href={`/event/${eventTicker}`}
+            href={`/markets/${marketTicker}`}
             className="text-accent-blue hover:text-accent-purple transition-colors font-ui font-medium"
             onClick={(e) => e.stopPropagation()}
           >

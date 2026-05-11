@@ -106,7 +106,7 @@ export function FeaturedMarkets({ events, loading }: FeaturedMarketsProps) {
                     timeLeft={timeLeft}
                     index={idx}
                     hot={idx === 0}
-                    eventTicker={event.ticker}
+                    marketTicker={getPrimaryMarket(event)?.ticker ?? event.ticker}
                   />
                 </motion.div>
               )

@@ -517,8 +517,10 @@ async function fetchUsdcMint(): Promise<PublicKey> {
   } catch {
     /* fall through */
   }
-  // Final fallback: standard devnet USDC.
-  _usdcMint = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU')
+  // Final fallback: project-specific devnet USDC mint (custom, fixed-supply
+  // token created for the demo — mint authority is set to the mint address
+  // itself, so no further minting is possible).
+  _usdcMint = new PublicKey('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr')
   return _usdcMint
 }
 

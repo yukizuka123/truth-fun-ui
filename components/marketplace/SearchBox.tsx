@@ -27,7 +27,7 @@ export function SearchBox() {
   const handleSelect = (ticker: string) => {
     setQuery('')
     setOpen(false)
-    router.push(`/event/${encodeURIComponent(ticker)}`)
+    router.push(`/markets/${encodeURIComponent(ticker)}`)
   }
 
   const showDropdown = open && query.trim().length >= 2
@@ -75,7 +75,7 @@ export function SearchBox() {
           {results.map((event) => (
             <button
               key={event.ticker}
-              onClick={() => handleSelect(event.ticker)}
+              onClick={() => handleSelect(event.markets?.[0]?.ticker ?? event.ticker)}
               className="w-full text-left px-4 py-3 hover:bg-bg-secondary transition-colors border-b border-dashed border-border last:border-b-0"
             >
               <div className="font-display font-bold text-sm text-ink line-clamp-1">{event.title}</div>
