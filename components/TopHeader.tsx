@@ -8,22 +8,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3001'
-const RPC = process.env.NEXT_PUBLIC_SOLANA_RPC ?? ''
-
-interface BackendHealth {
-  ok: boolean
-  mode: string
-  uptimeSec: number
-  stubbedOracle: boolean
-}
-
-interface BackendConfig {
-  network: string | null
-  rpcUrl: string | null
-  usdcMint: string | null
-  truthFunProgram: string | null
-  mockDflowProgram: string | null
-}
 
 interface WalletStatus {
   pubkey: string
@@ -31,20 +15,6 @@ interface WalletStatus {
   usdc: number
   network: string | null
   usdcMint: string | null
-}
-
-function networkLabel(rpc: string, backendNetwork: string | null | undefined): string {
-  if (backendNetwork === 'localnet' || rpc.includes('127.0.0.1') || rpc.includes('localhost')) return 'Localnet'
-  if (backendNetwork === 'devnet' || rpc.includes('api.devnet')) return 'Devnet'
-  if (rpc.includes('mainnet')) return 'Mainnet'
-  return backendNetwork ?? 'unknown'
-}
-
-function networkColor(label: string): string {
-  if (label === 'Localnet') return '#22C55E'
-  if (label === 'Devnet') return '#A78BFA'
-  if (label === 'Mainnet') return '#EF4444'
-  return '#94A3B8'
 }
 
 export default function TopHeader() {
@@ -77,34 +47,6 @@ export default function TopHeader() {
     localStorage.setItem('tf-theme', newTheme)
   }
 
-  // Render free tier sleeps after 15min and cold-starts in ~30s. Poll /health
-  // on a 2-min cadence when healthy, retry every 15s when down so the pill
-  // flips back fast once the backend wakes. The 45s AbortSignal timeout
-  // tolerates the cold start without hanging the browser tab.
-  // Throw on failure so SWR's error path engages errorRetryInterval; otherwise
-  // it would treat a `null` return as success and wait the full 2 min.
-  const { data: health, error: healthError } = useSWR<BackendHealth>(
-    'backend-health',
-    async () => {
-      const res = await fetch(`${BACKEND_URL}/health`, {
-        signal: AbortSignal.timeout(45_000),
-      })
-      if (!res.ok) throw new Error(`backend ${res.status}`)
-      return (await res.json()) as BackendHealth
-    },
-    {
-      refreshInterval: 120_000,
-      errorRetryInterval: 15_000,
-      errorRetryCount: 20,
-      revalidateOnFocus: false,
-      dedupingInterval: 5_000,
-    },
-  )
-  const { data: config } = useSWR<BackendConfig>(
-    'backend-config',
-    () => fetch(`${BACKEND_URL}/api/config`).then((r) => r.json()),
-    { revalidateOnFocus: false },
-  )
   const { data: walletStat, mutate: refreshWallet } = useSWR<WalletStatus | null>(
     publicKey ? `wallet-${publicKey.toBase58()}` : null,
     async () => {
@@ -119,10 +61,6 @@ export default function TopHeader() {
   useEffect(() => {
     if (connected) refreshWallet()
   }, [connected, refreshWallet])
-
-  const network = networkLabel(RPC, config?.network)
-  const networkClr = networkColor(network)
-  const backendOk = !healthError && !!health?.ok
 
   const handleFaucet = async () => {
     if (!publicKey) return
@@ -179,37 +117,8 @@ export default function TopHeader() {
           <Link href="#" className="font-ui text-sm font-medium text-ink-light hover:text-ink transition-colors">Docs</Link>
         </div>
 
-        {/* Right: dev pills + theme + wallet/faucet */}
+        {/* Right: theme + wallet/faucet */}
         <div className="flex items-center gap-2">
-          {/* Dev pills (compact) */}
-          <span
-            className="hidden md:inline-block text-[10px] font-mono px-2 py-1 rounded-md uppercase tracking-wide"
-            style={{
-              backgroundColor: `${networkClr}1A`,
-              border: `1px solid ${networkClr}66`,
-              color: networkClr,
-            }}
-            title={`RPC ${RPC}`}
-          >
-            ● {network}
-          </span>
-
-          <span
-            className="hidden md:inline-block text-[10px] font-mono px-2 py-1 rounded-md uppercase tracking-wide"
-            style={{
-              backgroundColor: backendOk ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
-              border: `1px solid ${backendOk ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.4)'}`,
-              color: backendOk ? '#22C55E' : '#EF4444',
-            }}
-            title={
-              backendOk
-                ? `backend ${BACKEND_URL} · mode=${health?.mode} · uptime=${health?.uptimeSec}s`
-                : `backend unreachable at ${BACKEND_URL}`
-            }
-          >
-            backend {backendOk ? 'ok' : 'down'}
-          </span>
-
           {/* Wallet info: shown when connected, replaces the standalone WalletButton */}
           {connected && walletStat && (
             <>
