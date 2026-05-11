@@ -77,10 +77,28 @@ export default function TopHeader() {
     localStorage.setItem('tf-theme', newTheme)
   }
 
-  const { data: health } = useSWR<BackendHealth>(
+  // Render free tier sleeps after 15min and cold-starts in ~30s. Poll /health
+  // on a 2-min cadence when healthy, retry every 15s when down so the pill
+  // flips back fast once the backend wakes. The 45s AbortSignal timeout
+  // tolerates the cold start without hanging the browser tab.
+  // Throw on failure so SWR's error path engages errorRetryInterval; otherwise
+  // it would treat a `null` return as success and wait the full 2 min.
+  const { data: health, error: healthError } = useSWR<BackendHealth>(
     'backend-health',
-    () => fetch(`${BACKEND_URL}/health`).then((r) => r.json()),
-    { refreshInterval: 5000, revalidateOnFocus: false },
+    async () => {
+      const res = await fetch(`${BACKEND_URL}/health`, {
+        signal: AbortSignal.timeout(45_000),
+      })
+      if (!res.ok) throw new Error(`backend ${res.status}`)
+      return (await res.json()) as BackendHealth
+    },
+    {
+      refreshInterval: 120_000,
+      errorRetryInterval: 15_000,
+      errorRetryCount: 20,
+      revalidateOnFocus: false,
+      dedupingInterval: 5_000,
+    },
   )
   const { data: config } = useSWR<BackendConfig>(
     'backend-config',
@@ -104,7 +122,7 @@ export default function TopHeader() {
 
   const network = networkLabel(RPC, config?.network)
   const networkClr = networkColor(network)
-  const backendOk = !!health?.ok
+  const backendOk = !healthError && !!health?.ok
 
   const handleFaucet = async () => {
     if (!publicKey) return
