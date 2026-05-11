@@ -25,6 +25,7 @@ interface DemoSummary {
   startedAt: number
   endedAt: number
   durationSec: number
+  sizeUsd: number
   arbs: ArbExecutedEvent[]
   bonusPoolDeltaUsd: number
   initialOracleBps: number | null
@@ -111,13 +112,17 @@ export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
     setArbLog([
       `Starting backend arb demo against ${arbTicker ?? 'configured ticker'}…`,
       `T+0  align curve to oracle`,
-      `T+5  retail wallet buys $50 of tfYES (drives curve up ~12c)`,
+      `T+5  retail wallet seeds tfYES (drives curve up ~12c)`,
       `T+30 bot executes Direction A (real on-chain tx)`,
       `T+60 oracle shock (priceBps += 1500)`,
       `T+80 bot executes Direction B (real on-chain tx)`,
       `T+120 wait for convergence…`,
     ])
-    const res = await fetch(`${BACKEND_URL}/api/arb/demo`, { method: 'POST' })
+    const res = await fetch(`${BACKEND_URL}/api/arb/demo`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({}),
+    })
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
       throw new Error((body as { error?: string }).error ?? `backend ${res.status}`)
@@ -126,6 +131,7 @@ export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
     setArbLog((prev) => [
       ...prev,
       `--- demo complete ---`,
+      `size: $${summary.sizeUsd} per leg`,
       `direction A: ${formatArb(summary.arbs[0])}`,
       `direction B: ${formatArb(summary.arbs[1])}`,
       `bonus pool delta: +$${summary.bonusPoolDeltaUsd.toFixed(4)} ✓`,
@@ -248,11 +254,22 @@ export default function ArbDemo({ marketId, dflowBasePrice }: Props) {
               className="rounded-lg p-4 space-y-1 font-mono text-xs"
               style={{ backgroundColor: '#0A0A0F', border: '1px solid #2A2A3A' }}
             >
-              {arbLog.map((line, i) => (
-                <p key={i} style={{ color: line.includes('✓') ? '#22C55E' : '#94A3B8' }}>
-                  {line}
-                </p>
-              ))}
+              {arbLog.map((line, i) => {
+                const isError = line.startsWith('error:')
+                const color = isError
+                  ? '#EF4444'
+                  : line.includes('✓')
+                    ? '#22C55E'
+                    : '#94A3B8'
+                return (
+                  <p
+                    key={i}
+                    style={{ color, wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+                  >
+                    {line}
+                  </p>
+                )
+              })}
               {isRunning && (
                 <p style={{ color: '#FACC15' }}>●▸ Running…</p>
               )}
